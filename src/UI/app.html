@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf8">
+        <title>SiteTray</title>
+
+        <!-- Easy script import -->
+        <script>{if(typeof module === 'object') { window.module = module; module = undefined; }}</script>
+
+
+        <!-- jQuery UI -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="jqueryui/ui-darkness/jquery-ui.min.css">
+
+        <!-- Finish script import -->
+        <script>if (window.module) module = window.module;</script>
+        
+        <script>
+            const { ipcRenderer } = require('electron')
+
+            // Add new site to list.
+            ipcRenderer.on('add', (e, data) => {
+                const element = $(`<div id="${data.id}" class="starting">${data.url}</div>`)
+            })
+
+            // A site has been initialized.
+            ipcRenderer.on('init', (e, data) => {
+                $(`#${data.id}`).removeClass('starting').addClass('started')
+            })
+
+            $('body').ready(() => {
+               
+            })
+        </script>
+
+        <style>
+            html, body { margin: 0px; padding: 0px; width: 100%; height: 100%; }
+
+            body {
+                font-family: verdana, arial, sans-serif, helvetica;
+                background-color: #333333;
+                color: #FFFFFF;
+                font-size: 22px;
+            }
+
+            /* Status of Tray apps. */
+            .starting   { color: #FF9900; }
+            .started    { color: #009900; }
+            .stopped    { color: #FF0000; }
+            
+        </style>
+    </head>
+
+    <body>
+        
+    </body>
+</html>

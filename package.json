@@ -1,0 +1,22 @@
+{
+  "name": "site-tray",
+  "version": "1.0.0",
+  "description": "Put websites into the system tray using Electron.",
+  "main": "src/SiteTray.js",
+  "scripts": {
+    "test": "electron ."
+  },
+  "keywords": [
+    "site",
+    "tray",
+    "electron",
+    "node",
+    "js",
+    "javascript"
+  ],
+  "author": "Lee McDonald",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^6.0.9"
+  }
+}
