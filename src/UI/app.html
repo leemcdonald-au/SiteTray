@@ -19,18 +19,58 @@
         <script>
             const { ipcRenderer } = require('electron')
 
-            // Add new site to list.
-            ipcRenderer.on('add', (e, data) => {
-                const element = $(`<div id="${data.id}" class="starting">${data.url}</div>`)
+            ipcRenderer.on('new', (e, data) => {
+                const element = $(`<div id="${data.id}" class="idle" style="text-align: center; padding: 5px; border-bottom: 1px solid #000000"><div>${data.url}</div><div><button name="open">Open</button> <button name="stop">Stop</button> <button name="exit">Exit</button> <button name="delete">Delete</button></div></div>`)
+                
+                // Button Events.
+                element.find('button[name="open"]').button().click(e => {
+                    ipcRenderer.send('open', data.id)
+                })
+
+                element.find('button[name="stop"]').button().click(e => {
+                    ipcRenderer.send('stop', data.id)
+                })
+
+                element.find('button[name="exit"]').button().click(e => {
+                    ipcRenderer.send('exit', data.id)
+                })
+
+                element.find('button[name="delete"]').button().click(e => {
+                    ipcRenderer.send('delete', data.id)
+                    $('#trays').find(element).remove()
+                })
+                
+                $('#trays').prepend(element)
             })
 
-            // A site has been initialized.
-            ipcRenderer.on('init', (e, data) => {
-                $(`#${data.id}`).removeClass('starting').addClass('started')
+            // Change the status of an element.
+            ipcRenderer.on('status', (e, data) => {
+                const element = $('#trays').find(`#${data.id}`)
+                switch(data.status) {
+                    case -1: {
+                        element.removeClass('idle').removeClass('running').addClass('exited')
+                        break
+                    }
+
+                    case 0: {
+                        element.removeClass('exited').removeClass('running').addClass('idle')
+                        break
+                    }
+
+                    case 1: {
+                        element.removeClass('idle').removeClass('exited').addClass('running')
+                        break
+                    }
+                }
             })
 
             $('body').ready(() => {
-               
+                // Initialize buttons.
+                $('button').button()
+
+                $('footer').find('button[name="add"]').click(e => {
+                    ipcRenderer.send('add', $('footer').find('input').val())
+                })
             })
         </script>
 
@@ -42,17 +82,41 @@
                 background-color: #333333;
                 color: #FFFFFF;
                 font-size: 22px;
+                display: flex;
+                flex-direction: column;
             }
 
             /* Status of Tray apps. */
-            .starting   { color: #FF9900; }
-            .started    { color: #009900; }
-            .stopped    { color: #FF0000; }
+            .idle       { color: #FF9900; }
+            .running    { color: #009900; }
+            .exited     { color: #FF0000; }
+
+            button { font-size: 12px !important; }
+
+            #trays {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                overflow: auto;
+            }
+
+            footer {
+                text-align: center;
+                margin: 5px;
+                border-top: 1px solid #000000;
+                padding: 5px;
+            }
+
+            footer input {
+                font-size: 20px;
+                width: 70%;
+            }
             
         </style>
     </head>
 
     <body>
-        
+        <div id="trays"></div>
+        <footer><input type="text" name="site" placeholder="https://music.youtube.com"> <button name="add">Add Site</button></footer>
     </body>
 </html>
