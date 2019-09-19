@@ -75,7 +75,6 @@ class TraySite extends EventEmitter {
                     })
 
                     this.window.on('ready-to-show', e => {
-                        this.window.show()
                         this.status = 1
                         this.emit('status', this.status)
                     })
@@ -138,7 +137,10 @@ const add = url => {
     site.initialize()
 
     // Send a message to the main window every time its status changes.
-    site.on('status', data => windows[0].window.webContents.send('status', { id: site.id, status: data }))
+    site.on('status', data => {
+        windows[0].window.webContents.send('status', { id: site.id, status: data })
+        if(data === 1) site.window.show()
+    })
 
     // Push to the windows array.
     windows.push(site)
@@ -162,7 +164,8 @@ app.on('ready', async () => {
     // Load the savefile.
     const file  = await awRead(`./sites.json`).catch(error)
     const sites = await awParseJSON(file).catch(error)
-    if(sites) for(let i = 0; i < sites.length; i++) add(sites[i]) 
+    if(sites.length) for(let i = 0; i < sites.length; i++) add(sites[i]) 
+    else main.on('status', data => { if(data === 1) main.window.show() })
 })
 
 // Stop the app from closing prematurely.

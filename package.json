@@ -1,9 +1,10 @@
 {
   "name": "site-tray",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Put websites into the system tray using Electron.",
   "main": "src/SiteTray.js",
   "scripts": {
+    "start": "electron .",
     "test": "electron ."
   },
   "keywords": [
